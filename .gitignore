@@ -1,0 +1,6 @@
+/venv
+.idea
+
+### custom add ###
+my_file.txt
+add_line.py
