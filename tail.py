@@ -5,7 +5,7 @@ import argparse
 my_parser = argparse.ArgumentParser(prog='py_tail',
                                     usage='%(prog)s [-f] [n] file_name',
                                     description='Hi! This is Anton Veldin\'s tail utility version!')
-my_parser.add_argument('n',
+my_parser.add_argument('n_lines',
                        type=int,
                        action='store',
                        nargs='?',
@@ -18,37 +18,36 @@ my_parser.add_argument('-f',
 my_parser.add_argument('file_name',
                        type=str,
                        action='store',
-                       help='path to text file')
+                       help='text file or path')
 args = my_parser.parse_args()
 # endregion parse arguments
 
 
-class TailReader:
+class Reader:
 
-    def __init__(self, n, file_name):
-        """
-        Arguments:
-        n -- number of lines to tail
-        file_name -- path to text file"""
+    def __init__(self, file_name):
         self.file_name = file_name
-        self.n = n
 
-    def read(self):
-        """Вывод последних n строк текстового файла."""
-        def base_read():
-            try:
-                with open(self.file_name, 'r') as file:
-                    lines = file.readlines()
-                    return print(''.join(lines[-self.n:]))
-            except FileNotFoundError:
-                print(f'File "{self.file_name}" didn\'t find.')
+    def read_file(self):
+        with open(self.file_name) as f:
+            lines = f.readlines()
+            count_of_lines = len(lines)
+            return lines, count_of_lines
 
-        if not args.follow:
-            base_read()
-        else:
-            print('Option "follow" turned on.')
-            base_read()
+    def tail(self, n_lines):
+        """Output n lines from a tail of the text file.
+        If follow is true - output appended data as the file grows."""
+
+        lines, base_count_of_lines = self.read_file()
+        print(''.join(lines[-n_lines:]))
+        if args.follow:
+            while True:
+                lines, count_of_lines = self.read_file()
+                if count_of_lines > base_count_of_lines:
+                    print(''.join(lines[base_count_of_lines:]))
+                    base_count_of_lines = count_of_lines
 
 
 if __name__ == '__main__':
-    TailReader(args.n, args.file_name).read()
+    reader = Reader(args.file_name)
+    reader.tail(args.n_lines)
