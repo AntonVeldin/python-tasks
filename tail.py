@@ -1,3 +1,6 @@
+# tail.py
+
+import os
 import argparse
 
 # region parse arguments
@@ -9,11 +12,11 @@ arg_parser.add_argument('-n',
                         type=int,
                         action='store',
                         default=-10,
-                        help='number of lines to tail')
+                        help='number of lines: if negative - to tail; if positive - from start')
 arg_parser.add_argument('-f',
                         '--follow',
                         action='store_true',
-                        help='output appended data as the file grows')
+                        help='output appended lines as the file grows')
 arg_parser.add_argument('file_name',
                         type=str,
                         action='store',
@@ -28,14 +31,18 @@ class Reader:
         self.file_name = file_name
 
     def read_lines(self):
-        with open(self.file_name) as file:
-            return file.readlines()
+        if os.path.isfile(self.file_name):
+            with open(self.file_name) as file:
+                return file.readlines()
+        else:
+            print(f'File "{self.file_name}" didn\'t find.')
+            exit()
 
     def tail(self, n: int):
         """ If n - negative: output n lines from a tail of the text file.
-        If n - positive: output lines from text file after n lines.
+        If n - positive: output all lines start from n.
 
-        If follow is marked true - output appended data as the file grows."""
+        If --follow is marked true - output appended data as the file grows."""
 
         lines = self.read_lines()
         base_count = len(lines)
