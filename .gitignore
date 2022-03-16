@@ -3,10 +3,12 @@
 
 ### custom add ###
 ## text files
-big.txt
-bbig.txt
+*.txt
+
+## decorator for define finc work time
+benchmark.py
 
 ## another version of tail
+tail_with_generator_ver1.py
 tail_with_generator_ver2.py
-
 
