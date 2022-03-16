@@ -1,45 +1,46 @@
 import argparse
 
 # region parse arguments
-from datetime import datetime
-
-my_parser = argparse.ArgumentParser(prog='py_tail',
-                                    usage='%(prog)s [-f] [n] file_name',
-                                    description='Hi! This is Anton Veldin\'s tail utility version!')
-my_parser.add_argument('n',
-                       type=int,
-                       action='store',
-                       nargs='?',
-                       default=10,
-                       help='number of lines to tail (default 10)')
-my_parser.add_argument('-f',
-                       '--follow',
-                       action='store_true',
-                       help='output appended data as the file grows')
-my_parser.add_argument('file_name',
-                       type=str,
-                       action='store',
-                       help='text file or path')
-args = my_parser.parse_args()
+arg_parser = argparse.ArgumentParser(prog='tail',
+                                     usage='%(prog)s [-f] [-n N] file_name',
+                                     description='Hi! This is Anton Veldin\'s tail utility version!',
+                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+arg_parser.add_argument('-n',
+                        type=int,
+                        action='store',
+                        default=-10,
+                        help='number of lines to tail')
+arg_parser.add_argument('-f',
+                        '--follow',
+                        action='store_true',
+                        help='output appended data as the file grows')
+arg_parser.add_argument('file_name',
+                        type=str,
+                        action='store',
+                        help='text file or path')
+args = arg_parser.parse_args()
 # endregion parse arguments
 
 
 class Reader:
 
-    def __init__(self, file_name):
+    def __init__(self, file_name: str):
         self.file_name = file_name
 
     def read_lines(self):
-        with open(self.file_name) as f:
-            return f.readlines()
+        with open(self.file_name) as file:
+            return file.readlines()
 
-    def tail(self, n):
-        """Output n lines from a tail of the text file.
-        If follow is true - output appended data as the file grows."""
+    def tail(self, n: int):
+        """ If n - negative: output n lines from a tail of the text file.
+        If n - positive: output lines from text file after n lines.
+
+        If follow is marked true - output appended data as the file grows."""
 
         lines = self.read_lines()
         base_count = len(lines)
-        print(''.join(lines[-n:]))
+        print(''.join(lines[n-1:]))
+
         if args.follow:
             while True:
                 lines = self.read_lines()

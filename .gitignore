@@ -2,5 +2,11 @@
 .idea
 
 ### custom add ###
-my_file.txt
-add_line.py
+## text files
+big.txt
+bbig.txt
+
+## another version of tail
+tail_with_generator_ver2.py
+
+
